@@ -195,7 +195,6 @@ function renderCategoriesGrid() {
         <a class="category-card" href="offres.html?cat=${encodeURIComponent(category)}" aria-label="Voir les offres du secteur ${escapeHTML(category)}">
             <i class="fas ${icons[index]}"></i>
             <h3>${escapeHTML(category)}</h3>
-            <span>Voir les offres <i class="fas fa-arrow-right"></i></span>
         </a>
     `).join('');
 }

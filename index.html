@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmploiConnect CI | Emploi et recrutement en Côte d'Ivoire</title>
-    <meta name="description" content="Trouvez un emploi ou recrutez vos futurs talents en Côte d'Ivoire. Parcourez les offres par métier, ville et secteur.">
+    <title>EmploiConnect CI - Trouvez le bon emploi, recrutez les bons talents en Côte d'Ivoire</title>
+    <meta name="description" content="Plateforme de mise en relation professionnelle en Côte d'Ivoire : offres d'emploi, stages, alternances à Abidjan, Bouaké, Yamoussoukro, San Pedro et Korhogo.">
     <meta name="theme-color" content="#102b46">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -36,13 +36,13 @@
         </div>
     </header>
 
-    <main>
+    <main class="home-page">
         <section class="home-hero">
             <div class="container home-hero-inner">
                 <div class="home-hero-copy">
-                    <span class="eyebrow"><span></span> EMPLOI & RECRUTEMENT EN CÔTE D'IVOIRE</span>
+                    <span class="home-eyebrow"><span></span> EMPLOI & RECRUTEMENT EN CÔTE D'IVOIRE</span>
                     <h1>Le prochain chapitre de votre carrière <em>commence ici.</em></h1>
-                    <p>De nouvelles opportunités pour avancer. Des talents pour faire grandir votre entreprise. Trouvons ensemble la bonne rencontre.</p>
+                    <p>Des opportunités pour avancer. Des talents pour faire grandir les entreprises. Trouvons ensemble la bonne rencontre.</p>
                     <div class="home-hero-actions">
                         <a href="offres.html" class="btn btn-accent">Explorer les offres <i class="fas fa-arrow-right"></i></a>
                         <a href="recruteur.html" class="home-text-link">Je recrute <i class="fas fa-arrow-up-right-from-square"></i></a>
@@ -52,12 +52,13 @@
                         <span><i class="fas fa-briefcase"></i> CDI, CDD, stages et plus</span>
                     </div>
                 </div>
-                <div class="home-hero-visual" role="img" aria-label="Professionnels collaborant dans un espace de travail">
-                    <div class="hero-image-caption">
-                        <span class="caption-icon"><i class="fas fa-location-dot"></i></span>
+                <div class="home-hero-visual">
+                    <img src="images/equipe-collaboration.jpg" alt="Des collègues collaborent autour d’un projet" fetchpriority="high">
+                    <div class="home-hero-caption">
+                        <span class="home-caption-icon"><i class="fas fa-location-dot"></i></span>
                         <span><strong>Votre avenir professionnel</strong><small>Commence par une rencontre.</small></span>
                     </div>
-                    <div class="hero-image-mark" aria-hidden="true"><i class="fas fa-plus"></i></div>
+                    <span class="home-image-accent" aria-hidden="true"></span>
                 </div>
             </div>
         </section>
@@ -67,12 +68,12 @@
                 <div class="home-search-card">
                     <div class="home-search-heading">
                         <div>
-                            <span class="eyebrow">FAITES LE PREMIER PAS</span>
-                            <h2 id="home-search-title">Votre prochain emploi vous attend.</h2>
+                            <span class="home-eyebrow">FAITES LE PREMIER PAS</span>
+                            <h2 id="home-search-title">Votre prochaine opportunité commence ici.</h2>
                         </div>
                         <a href="offres.html" class="home-text-link">Toutes les offres <i class="fas fa-arrow-right"></i></a>
                     </div>
-                    <form class="search-box" id="home-search-form" role="search">
+                    <form class="search-box home-search-box" id="home-search-form" role="search">
                         <label class="search-input-group" for="search-keyword">
                             <i class="fas fa-search" aria-hidden="true"></i>
                             <span class="sr-only">Métier, entreprise ou compétence</span>
@@ -114,63 +115,74 @@
             <div class="container">
                 <div class="home-section-heading">
                     <div>
-                        <span class="eyebrow">DEUX PARCOURS, UNE MÊME AMBITION</span>
+                        <span class="home-eyebrow">DEUX PARCOURS, UNE MÊME AMBITION</span>
                         <h2>Le talent qu'il vous faut.<br>Le travail qui vous ressemble.</h2>
                     </div>
                     <p>Que vous cherchiez votre prochaine opportunité ou la personne qui fera la différence, votre parcours commence ici.</p>
                 </div>
-                <div class="home-path-grid">
-                    <a class="home-path-card home-path-candidate" href="offres.html">
-                        <span class="home-path-icon"><i class="fas fa-user-tie"></i></span>
-                        <span class="home-path-content">
-                            <span class="eyebrow">POUR LES CANDIDATS</span>
-                            <strong>Trouvez un poste à la hauteur de vos ambitions.</strong>
-                            <span>Parcourez les offres et postulez avec votre profil.</span>
-                            <span class="home-path-link">Voir les offres <i class="fas fa-arrow-right"></i></span>
+                <div class="home-opportunity-grid">
+                    <a class="home-opportunity-card" href="offres.html">
+                        <img src="images/candidats.jpg" alt="Une équipe échange dans un espace de travail" loading="lazy">
+                        <span class="home-opportunity-overlay"></span>
+                        <span class="home-opportunity-copy">
+                            <span class="home-opportunity-label">POUR LES CANDIDATS</span>
+                            <strong>Votre prochaine étape professionnelle.</strong>
+                            <span class="home-opportunity-link">Voir les offres <i class="fas fa-arrow-right"></i></span>
                         </span>
-                        <i class="fas fa-arrow-up-right-from-square home-path-arrow" aria-hidden="true"></i>
                     </a>
-                    <a class="home-path-card home-path-recruiter" href="recruteur.html">
-                        <span class="home-path-icon"><i class="fas fa-people-group"></i></span>
-                        <span class="home-path-content">
-                            <span class="eyebrow">POUR LES RECRUTEURS</span>
-                            <strong>Rencontrez les talents qui feront avancer votre équipe.</strong>
-                            <span>Publiez une offre et suivez vos candidatures.</span>
-                            <span class="home-path-link">Publier une offre <i class="fas fa-arrow-right"></i></span>
+                    <a class="home-opportunity-card" href="recruteur.html">
+                        <img src="images/espace-travail.jpg" alt="Un espace professionnel prêt pour une nouvelle journée" loading="lazy">
+                        <span class="home-opportunity-overlay"></span>
+                        <span class="home-opportunity-copy">
+                            <span class="home-opportunity-label">POUR LES RECRUTEURS</span>
+                            <strong>Rencontrez les talents qui feront avancer votre activité.</strong>
+                            <span class="home-opportunity-link">Publier une offre <i class="fas fa-arrow-right"></i></span>
                         </span>
-                        <i class="fas fa-arrow-up-right-from-square home-path-arrow" aria-hidden="true"></i>
                     </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="home-categories-section">
-            <div class="container">
-                <div class="home-section-heading">
-                    <div>
-                        <span class="eyebrow">EXPLOREZ VOS POSSIBILITÉS</span>
-                        <h2>Un secteur pour chaque talent.</h2>
-                    </div>
-                    <a href="offres.html" class="home-text-link">Parcourir les offres <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div id="categories-grid" class="categories-grid home-categories-grid">
-                    <!-- Dynamically populated by main.js -->
                 </div>
             </div>
         </section>
 
         <section class="home-jobs-section">
             <div class="container">
-                <div class="home-section-heading">
+                <div class="home-section-heading home-jobs-heading">
                     <div>
-                        <span class="eyebrow">OPPORTUNITÉS PROFESSIONNELLES</span>
-                        <h2>Les offres à découvrir.</h2>
+                        <span class="home-eyebrow">NOUVELLES OPPORTUNITÉS</span>
+                        <h2>Les offres récemment publiées</h2>
+                        <p>Parcourez les opportunités actuellement disponibles sur la plateforme.</p>
                     </div>
                     <a href="offres.html" class="home-text-link">Voir toutes les offres <i class="fas fa-arrow-right"></i></a>
                 </div>
-                <div id="recent-jobs-container" class="jobs-grid">
-                    <!-- Dynamically populated by main.js -->
+                <div id="recent-jobs-container" class="jobs-grid home-jobs-grid" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section class="home-categories-section">
+            <div class="container">
+                <div class="home-section-heading home-categories-heading">
+                    <div>
+                        <span class="home-eyebrow">TROUVEZ VOTRE VOIE</span>
+                        <h2>Explorez par secteur d'activité</h2>
+                    </div>
+                    <a href="offres.html" class="home-text-link">Tous les secteurs <i class="fas fa-arrow-right"></i></a>
                 </div>
+                <div id="categories-grid" class="categories-grid home-categories-grid"></div>
+            </div>
+        </section>
+
+        <section class="home-how-section">
+            <div class="container home-how-inner">
+                <div class="home-how-copy">
+                    <span class="home-eyebrow">SIMPLE, DIRECT, ACCESSIBLE</span>
+                    <h2>La bonne rencontre professionnelle, en quelques étapes.</h2>
+                    <p>Créez votre espace, échangez avec les employeurs et faites avancer votre projet professionnel au même endroit.</p>
+                    <a href="candidat.html" class="btn btn-accent">Créer mon espace candidat <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <ol class="home-steps">
+                    <li><span>01</span><div><strong>Explorez</strong><p>Recherchez parmi les offres par métier, secteur ou ville.</p></div></li>
+                    <li><span>02</span><div><strong>Présentez votre profil</strong><p>Ajoutez votre parcours et un CV privé à votre espace candidat.</p></div></li>
+                    <li><span>03</span><div><strong>Suivez vos candidatures</strong><p>Retrouvez les réponses des recruteurs dans votre espace personnel.</p></div></li>
+                </ol>
             </div>
         </section>
     </main>
