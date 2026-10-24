@@ -41,6 +41,8 @@ connexion au backend.
    source. Le workflow `.github/workflows/deploy-pages.yml` publie le site à
    chaque mise à jour de `main`. L'ouverture directe des fichiers en `file://`
    n'est pas un mode de déploiement.
+   Si un déploiement a échoué avant l'activation de Pages, relancez-le depuis
+   **Actions > Deploy static site to GitHub Pages > Re-run jobs**.
 
 ## Parcours disponibles
 
