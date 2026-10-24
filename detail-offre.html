@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détail de l'offre - EmploiConnect CI</title>
+    <meta name="description" content="Consultez les détails complets de l'offre d'emploi, les missions, profil requis et postulez en ligne.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="offres.html" class="active">Offres d'emploi</a>
+                <a href="candidat.html">Espace Candidat</a>
+                <a href="recruteur.html">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Detail Section -->
+    <section class="container" style="padding-top: 3rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <a href="offres.html" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Retour aux offres</a>
+        </div>
+        
+        <div id="job-detail-container">
+            <!-- Populated dynamically by main.js based on URL ?id=X -->
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EmploiConnect CI</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">La plateforme professionnelle de référence pour l'emploi en Côte d'Ivoire.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="offres.html">Offres d'emploi</a></li>
+                        <li><a href="candidat.html">Espace Candidat</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Informations Légales</h3>
+                    <ul>
+                        <li><a href="contact.html">Mentions Légales</a></li>
+                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="back-to-top" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

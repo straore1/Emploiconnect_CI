@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offres d'Emploi en Côte d'Ivoire - EmploiConnect CI</title>
+    <meta name="description" content="Consultez toutes nos offres d'emploi, stages et alternances en Côte d'Ivoire (Abidjan, Bouaké, Yamoussoukro, San Pedro, Korhogo).">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="offres.html" class="active">Offres d'emploi</a>
+                <a href="candidat.html">Espace Candidat</a>
+                <a href="recruteur.html">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content with Sidebar Filters -->
+    <section class="container" style="padding-top: 3rem;">
+        <div class="section-title" style="text-align: left; margin-bottom: 2rem;">
+            <h1>Offres d'Emploi, Stages & Alternances</h1>
+            <p id="results-count">Chargement des offres...</p>
+        </div>
+
+        <div class="content-with-sidebar">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1.1rem;"><i class="fas fa-filter"></i> Filtres de recherche</h3>
+                    <button id="reset-filters" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">Réinitialiser</button>
+                </div>
+
+                <div class="filter-group">
+                    <label>Recherche par mots-clés</label>
+                    <input type="text" id="filter-search" placeholder="Poste, entreprise, techno...">
+                </div>
+
+                <div class="filter-group">
+                    <label>Ville</label>
+                    <select id="filter-city">
+                        <option value="">Toutes les villes</option>
+                        <option value="Abidjan">Abidjan</option>
+                        <option value="Bouaké">Bouaké</option>
+                        <option value="Yamoussoukro">Yamoussoukro</option>
+                        <option value="San Pedro">San Pedro</option>
+                        <option value="Korhogo">Korhogo</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Secteur / Catégorie</label>
+                    <select id="filter-category">
+                        <option value="">Tous les secteurs</option>
+                        <option value="Informatique et développement web">Informatique</option>
+                        <option value="Comptabilité et finance">Comptabilité & Finance</option>
+                        <option value="Commerce et vente">Commerce & Vente</option>
+                        <option value="Transport et logistique">Transport & Logistique</option>
+                        <option value="Ressources humaines">Ressources Humaines</option>
+                        <option value="Marketing et communication">Marketing & Communication</option>
+                        <option value="Administration">Administration</option>
+                        <option value="Hôtellerie et restauration">Hôtellerie & Restauration</option>
+                        <option value="Stages et emplois débutants">Stages & Débutants</option>
+                        <option value="Métiers techniques et artisanaux">Métiers techniques</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Type de contrat</label>
+                    <select id="filter-contract">
+                        <option value="">Tous les contrats</option>
+                        <option value="CDI">CDI</option>
+                        <option value="CDD">CDD</option>
+                        <option value="Stage">Stage</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Trier par</label>
+                    <select id="filter-sort">
+                        <option value="recent">Plus récentes</option>
+                        <option value="oldest">Plus anciennes</option>
+                        <option value="title">Titre (A-Z)</option>
+                    </select>
+                </div>
+            </aside>
+
+            <!-- Offers Grid Content -->
+            <main>
+                <div id="all-jobs-container" class="jobs-grid">
+                    <!-- Dynamically populated by main.js -->
+                </div>
+            </main>
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EmploiConnect CI</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">La plateforme professionnelle de référence pour l'emploi, le stage et l'alternance en Côte d'Ivoire.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="offres.html">Offres d'emploi</a></li>
+                        <li><a href="candidat.html">Espace Candidat</a></li>
+                        <li><a href="recruteur.html">Espace Recruteur</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Informations Légales</h3>
+                    <ul>
+                        <li><a href="contact.html">Mentions Légales</a></li>
+                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                        <li><a href="contact.html">CGU</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Tél : +225 27 20 00 00 00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="back-to-top" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

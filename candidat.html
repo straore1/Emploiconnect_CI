@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Candidat - EmploiConnect CI</title>
+    <meta name="description" content="Créez votre profil candidat, déposez votre CV local et valorisez vos compétences auprès des recruteurs en Côte d'Ivoire.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="offres.html">Offres d'emploi</a>
+                <a href="candidat.html" class="active">Espace Candidat</a>
+                <a href="recruteur.html">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Candidate Form Section -->
+    <section class="container" style="padding-top: 3rem;">
+        <div class="section-title">
+            <h1>Espace Candidat : Créez votre Profil Professionnel</h1>
+            <p>Renseignez vos informations pour postuler facilement aux offres d'emploi en Côte d'Ivoire</p>
+        </div>
+
+        <div class="form-container">
+            <div style="background: var(--primary-light); padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
+                <p style="font-size: 0.9rem; color: var(--text-color);">
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Note de confidentialité :</strong> Ce site est un prototype statique. Vos données et votre CV sont stockés exclusivement dans le stockage local (<code>localStorage</code>) de votre navigateur et ne sont jamais envoyés sur un serveur distant.
+                </p>
+            </div>
+
+            <form id="candidate-profile-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="cand-name">Nom et Prénom *</label>
+                        <input type="text" id="cand-name" required placeholder="Ex: Kouassi Amenan Marie">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-email">Adresse e-mail *</label>
+                        <input type="email" id="cand-email" required placeholder="Ex: amenan.kouassi@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-phone">Numéro de téléphone *</label>
+                        <input type="tel" id="cand-phone" required placeholder="Ex: +225 07 01 02 03 04">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-city">Ville de résidence *</label>
+                        <select id="cand-city" required>
+                            <option value="">Sélectionnez une ville</option>
+                            <option value="Abidjan">Abidjan</option>
+                            <option value="Bouaké">Bouaké</option>
+                            <option value="Yamoussoukro">Yamoussoukro</option>
+                            <option value="San Pedro">San Pedro</option>
+                            <option value="Korhogo">Korhogo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-job">Métier / Poste recherché *</label>
+                        <input type="text" id="cand-job" required placeholder="Ex: Développeur Web, Comptable, Commercial...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-exp">Années d'expérience *</label>
+                        <select id="cand-exp" required>
+                            <option value="">Sélectionnez votre expérience</option>
+                            <option value="Débutant / 0-1 an">Débutant / 0-1 an</option>
+                            <option value="1 à 3 ans">1 à 3 ans</option>
+                            <option value="3 à 5 ans">3 à 5 ans</option>
+                            <option value="Plus de 5 ans">Plus de 5 ans</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-education">Niveau d'études *</label>
+                        <select id="cand-education" required>
+                            <option value="">Sélectionnez votre niveau</option>
+                            <option value="Bac / Niveau Bac">Bac / Niveau Bac</option>
+                            <option value="BTS / DUT / DEUG">BTS / DUT / DEUG</option>
+                            <option value="Licence / Bac+3">Licence / Bac+3</option>
+                            <option value="Master / Ingénieur / Bac+5">Master / Ingénieur / Bac+5</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cand-skills">Compétences clés (séparées par des virgules) *</label>
+                        <input type="text" id="cand-skills" required placeholder="Ex: Excel, JavaScript, Négociation, Comptabilité">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="cand-bio">Présentation professionnelle / Résumé</label>
+                        <textarea id="cand-bio" placeholder="Décrivez brièvement votre parcours, vos ambitions et vos points forts..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="cand-cv">Téléverser votre CV (Format PDF ou DOCX, max 5 Mo) *</label>
+                        <input type="file" id="cand-cv" accept=".pdf,.docx" required>
+                        <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Le fichier reste local sur votre poste.</small>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 0.875rem 2.5rem;"><i class="fas fa-save"></i> Enregistrer mon profil</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EmploiConnect CI</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">La plateforme professionnelle de référence pour l'emploi en Côte d'Ivoire.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="offres.html">Offres d'emploi</a></li>
+                        <li><a href="recruteur.html">Espace Recruteur</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Informations Légales</h3>
+                    <ul>
+                        <li><a href="contact.html">Mentions Légales</a></li>
+                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="back-to-top" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/forms.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Recruteur - EmploiConnect CI</title>
+    <meta name="description" content="Publiez vos offres d'emploi, stages ou alternances et touchez les meilleurs talents en Côte d'Ivoire.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="offres.html">Offres d'emploi</a>
+                <a href="candidat.html">Espace Candidat</a>
+                <a href="recruteur.html" class="active">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Recruiter Form Section -->
+    <section class="container" style="padding-top: 3rem;">
+        <div class="section-title">
+            <h1>Espace Recruteur : Publiez une Offre</h1>
+            <p>Diffusez votre annonce d'emploi, de stage ou d'alternance sur le réseau local EmploiConnect CI</p>
+        </div>
+
+        <div class="form-container">
+            <div style="background: var(--primary-light); padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
+                <p style="font-size: 0.9rem; color: var(--text-color);">
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Mode Démo Local :</strong> L'offre publiée sera ajoutée immédiatement dans la liste des offres consultables sur votre navigateur via <code>localStorage</code> (aucun serveur distant requis).
+                </p>
+            </div>
+
+            <form id="recruiter-offer-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="rec-company">Nom de l'entreprise *</label>
+                        <input type="text" id="rec-company" required placeholder="Ex: Abidjan Digital Corp">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-title">Titre du poste *</label>
+                        <input type="text" id="rec-title" required placeholder="Ex: Chef de Projet Marketing Digital">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-category">Secteur / Catégorie *</label>
+                        <select id="rec-category" required>
+                            <option value="">Sélectionnez un secteur</option>
+                            <option value="Informatique et développement web">Informatique</option>
+                            <option value="Comptabilité et finance">Comptabilité & Finance</option>
+                            <option value="Commerce et vente">Commerce & Vente</option>
+                            <option value="Transport et logistique">Transport & Logistique</option>
+                            <option value="Ressources humaines">Ressources Humaines</option>
+                            <option value="Marketing et communication">Marketing & Communication</option>
+                            <option value="Administration">Administration</option>
+                            <option value="Hôtellerie et restauration">Hôtellerie & Restauration</option>
+                            <option value="Stages et emplois débutants">Stages & Débutants</option>
+                            <option value="Métiers techniques et artisanaux">Métiers techniques</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-contract">Type de contrat *</label>
+                        <select id="rec-contract" required>
+                            <option value="">Sélectionnez le contrat</option>
+                            <option value="CDI">CDI</option>
+                            <option value="CDD">CDD</option>
+                            <option value="Stage">Stage</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-city">Ville *</label>
+                        <select id="rec-city" required>
+                            <option value="">Sélectionnez la ville</option>
+                            <option value="Abidjan">Abidjan</option>
+                            <option value="Bouaké">Bouaké</option>
+                            <option value="Yamoussoukro">Yamoussoukro</option>
+                            <option value="San Pedro">San Pedro</option>
+                            <option value="Korhogo">Korhogo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-quartier">Quartier / Précision lieu</label>
+                        <input type="text" id="rec-quartier" placeholder="Ex: Plateau, Cocody, Zone 4...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-salary">Rémunération / Salaire indicatif</label>
+                        <input type="text" id="rec-salary" placeholder="Ex: 400 000 - 600 000 FCFA">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-exp">Expérience requise</label>
+                        <select id="rec-exp">
+                            <option value="Débutant accepté / 0-1 an">Débutant accepté / 0-1 an</option>
+                            <option value="1 à 3 ans">1 à 3 ans</option>
+                            <option value="3 à 5 ans">3 à 5 ans</option>
+                            <option value="5 ans et plus">5 ans et plus</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-edu">Niveau d'études requis</label>
+                        <input type="text" id="rec-edu" placeholder="Ex: Bac+3 / Bac+5 en Informatique">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-email">E-mail de contact RH *</label>
+                        <input type="email" id="rec-email" required placeholder="Ex: rh@monentreprise.ci">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rec-phone">Téléphone de contact</label>
+                        <input type="tel" id="rec-phone" placeholder="Ex: +225 27 20 00 00 00">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="rec-desc">Description complète du poste *</label>
+                        <textarea id="rec-desc" required placeholder="Présentation de l'offre et du contexte..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="rec-missions">Missions principales (une par ligne)</label>
+                        <textarea id="rec-missions" placeholder="Mission 1&#10;Mission 2&#10;Mission 3"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="rec-skills">Compétences clés (séparées par des virgules)</label>
+                        <input type="text" id="rec-skills" placeholder="Ex: React, Node.js, Gestion de projet, Rigueur">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="rec-profile">Profil recherché</label>
+                        <textarea id="rec-profile" placeholder="Qualités, formation, savoir-être attendus..."></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <button type="submit" class="btn btn-accent" style="padding: 0.875rem 2.5rem;"><i class="fas fa-paper-plane"></i> Publier l'offre localement</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EmploiConnect CI</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">La plateforme professionnelle de référence pour l'emploi en Côte d'Ivoire.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="index.html">Accueil</a></li>
+                        <li><a href="offres.html">Offres d'emploi</a></li>
+                        <li><a href="candidat.html">Espace Candidat</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Informations Légales</h3>
+                    <ul>
+                        <li><a href="contact.html">Mentions Légales</a></li>
+                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="back-to-top" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/forms.js"></script>
+</body>
+</html>

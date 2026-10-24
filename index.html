@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmploiConnect CI - Trouvez le bon emploi, recrutez les bons talents en Côte d'Ivoire</title>
+    <meta name="description" content="Plateforme de mise en relation professionnelle en Côte d'Ivoire : offres d'emploi, stages, alternances à Abidjan, Bouaké, Yamoussoukro, San Pedro et Korhogo.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html" class="active">Accueil</a>
+                <a href="offres.html">Offres d'emploi</a>
+                <a href="candidat.html">Espace Candidat</a>
+                <a href="recruteur.html">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Trouvez le bon emploi.<br>Recrutez les bons talents.</h1>
+            <p>La plateforme qui rapproche les talents et les entreprises en Côte d'Ivoire.</p>
+            
+            <div class="hero-buttons">
+                <a href="offres.html" class="btn btn-primary"><i class="fas fa-search"></i> Trouver un emploi</a>
+                <a href="recruteur.html" class="btn btn-accent"><i class="fas fa-plus-circle"></i> Publier une offre</a>
+            </div>
+
+            <!-- Moteur de recherche d'emploi -->
+            <div class="search-box">
+                <div class="search-input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-keyword" placeholder="Poste, mots-clés, compétences...">
+                </div>
+                <div class="search-input-group">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <select id="search-city">
+                        <option value="">Toutes les villes</option>
+                        <option value="Abidjan">Abidjan</option>
+                        <option value="Bouaké">Bouaké</option>
+                        <option value="Yamoussoukro">Yamoussoukro</option>
+                        <option value="San Pedro">San Pedro</option>
+                        <option value="Korhogo">Korhogo</option>
+                    </select>
+                </div>
+                <div class="search-input-group">
+                    <i class="fas fa-briefcase"></i>
+                    <select id="search-category">
+                        <option value="">Tous les secteurs</option>
+                        <option value="Informatique et développement web">Informatique</option>
+                        <option value="Comptabilité et finance">Finance & Comptabilité</option>
+                        <option value="Commerce et vente">Commerce & Vente</option>
+                        <option value="Transport et logistique">Logistique & Transport</option>
+                        <option value="Ressources humaines">Ressources Humaines</option>
+                        <option value="Marketing et communication">Marketing & Com</option>
+                        <option value="Stages et emplois débutants">Stages & Débutants</option>
+                    </select>
+                </div>
+                <button id="home-search-btn" class="btn btn-primary" style="height: 100%;">Rechercher</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catégories populaires -->
+    <section class="container">
+        <div class="section-title">
+            <h2>Explorez par Catégorie</h2>
+            <p>Découvrez les secteurs qui recrutent activement en Côte d'Ivoire</p>
+        </div>
+        <div id="categories-grid" class="categories-grid">
+            <!-- Dynamically populated by main.js -->
+        </div>
+    </section>
+
+    <!-- Offres récentes -->
+    <section class="container" style="background-color: var(--card-bg); padding: 3rem; border-radius: var(--radius); border: 1px solid var(--border-color); margin-bottom: 3rem;">
+        <div class="section-title" style="margin-bottom: 2rem;">
+            <h2>Offres d'Emploi Récentes</h2>
+            <p>Les dernières opportunités professionnelles publiées sur la plateforme</p>
+        </div>
+        <div id="recent-jobs-container" class="jobs-grid">
+            <!-- Dynamically populated by main.js -->
+        </div>
+        <div style="text-align: center; margin-top: 2.5rem;">
+            <a href="offres.html" class="btn btn-outline">Voir toutes les offres d'emploi <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- Entreprises partenaires -->
+    <section class="container">
+        <div class="section-title">
+            <h2>Entreprises Partenaires de Démonstration</h2>
+            <p>Elles font confiance à notre écosystème pour identifier les meilleurs talents ivoiriens</p>
+        </div>
+        <div id="partners-scroll" class="partners-scroll">
+            <!-- Dynamically populated -->
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section class="container" style="margin-top: 4rem;">
+        <div class="section-title">
+            <h2>Témoignages de Réussite</h2>
+            <p>Ce que disent nos candidats et recruteurs utilisateurs</p>
+        </div>
+        <div id="testimonials-grid" class="testimonials-grid">
+            <!-- Dynamically populated -->
+        </div>
+    </section>
+
+    <!-- Pied de page -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>EmploiConnect CI</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">La plateforme professionnelle de référence pour l'emploi, le stage et l'alternance en Côte d'Ivoire.</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">📍 Abidjan, Plateau, Côte d'Ivoire</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Liens Rapides</h3>
+                    <ul>
+                        <li><a href="offres.html">Offres d'emploi</a></li>
+                        <li><a href="candidat.html">Espace Candidat</a></li>
+                        <li><a href="recruteur.html">Espace Recruteur</a></li>
+                        <li><a href="conseils.html">Conseils Carrière</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Informations Légales</h3>
+                    <ul>
+                        <li><a href="contact.html">Mentions Légales</a></li>
+                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                        <li><a href="contact.html">Conditions Générales d'Utilisation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact & Support</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">Email : contact@emploiconnect.ci</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Tél : +225 27 20 00 00 00</p>
+                    <div style="display: flex; gap: 1rem; font-size: 1.25rem;">
+                        <a href="#" style="color: var(--primary-color)"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" style="color: var(--primary-color)"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: var(--primary-color)"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique (Données fictives de démonstration).</p>
+            </div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="back-to-top" title="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
