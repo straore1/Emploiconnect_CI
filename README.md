@@ -9,10 +9,10 @@ L'URL Supabase et la clé publishable sont configurées dans `js/config.js`. Cet
 clé est destinée aux applications publiques ; elle ne remplace pas les règles
 RLS et ne doit jamais être remplacée par une clé `service_role`.
 
-Le projet Supabase doit encore recevoir le schéma SQL avant que les comptes,
-offres, candidatures et messages soient disponibles. Sans schéma, les pages
-publiques ne peuvent pas charger les offres et le site signale les erreurs de
-connexion au backend.
+Pour un nouveau projet Supabase, exécutez le schéma SQL décrit ci-dessous avant
+d'activer les comptes, offres, candidatures et messages. L'instance utilisée par
+le site publié a déjà été configurée ; ne réexécutez le schéma que pour créer ou
+mettre à jour un projet.
 
 ## Configuration Supabase
 
@@ -34,8 +34,9 @@ connexion au backend.
    Les clés publishable/anon sont destinées au navigateur et les règles RLS
    protègent les données. **Ne mettez jamais la clé `service_role` dans le site.**
 4. Dans **Authentication > URL Configuration**, indiquez l'URL publique du site
-   comme URL principale et ajoutez les URL locales utilisées pour le développement.
-   Laissez la confirmation par e-mail activée en production ; après confirmation,
+   comme URL principale et ajoutez-la aux URL de redirection autorisées. Ajoutez
+   également les URL locales utilisées pour le développement. Laissez la
+   confirmation par e-mail activée en production ; après confirmation,
    l'utilisateur pourra se connecter avec son adresse et son mot de passe.
 5. Activez GitHub Pages dans **Settings > Pages**, avec **GitHub Actions** comme
    source. Le workflow `.github/workflows/deploy-pages.yml` publie le site à
@@ -52,6 +53,8 @@ connexion au backend.
   il a envoyé une candidature.
 - Les recruteurs créent un compte, publient et ferment leurs offres et consultent
   les candidatures reçues pour ces offres.
+- Les candidats et recruteurs peuvent demander par e-mail un lien de réinitialisation
+  et définir un nouveau mot de passe depuis l'espace correspondant.
 - Le formulaire de contact enregistre les messages dans Supabase.
 
 Les règles de sécurité sont appliquées côté base (Row Level Security) ; la clé

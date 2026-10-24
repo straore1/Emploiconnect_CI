@@ -72,6 +72,19 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Continuer</button>
                 </form>
+                <button id="password-reset-button" class="btn btn-outline" type="button">Mot de passe oublié ?</button>
+                <form id="password-reset-form" hidden>
+                    <h3>Choisissez un nouveau mot de passe</h3>
+                    <div class="form-group">
+                        <label for="new-password">Nouveau mot de passe (8 caractères minimum)</label>
+                        <input type="password" id="new-password" autocomplete="new-password" minlength="8" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmer le mot de passe</label>
+                        <input type="password" id="confirm-password" autocomplete="new-password" minlength="8" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer le nouveau mot de passe</button>
+                </form>
                 <button id="signout-button" class="btn btn-outline" type="button" hidden>Se déconnecter</button>
             </div>
 

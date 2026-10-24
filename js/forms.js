@@ -43,18 +43,35 @@ function initAccountForm(client) {
     const expectedRole = form.dataset.role;
     const accountMessage = document.getElementById('account-message');
     const signOutButton = document.getElementById('signout-button');
+    const passwordResetButton = document.getElementById('password-reset-button');
+    const passwordResetForm = document.getElementById('password-reset-form');
+    let isRecoveryMode = new URLSearchParams(window.location.search).get('mode') === 'recovery';
     const profileForm = document.getElementById('candidate-profile-form') ||
         document.getElementById('recruiter-offer-form');
     const dashboard = document.getElementById('candidate-applications') ||
         document.getElementById('recruiter-dashboard');
 
     async function refreshAccount(session) {
+        if (isRecoveryMode) {
+            window.currentUser = session?.user || null;
+            form.hidden = true;
+            passwordResetButton.hidden = true;
+            passwordResetForm.hidden = false;
+            signOutButton.hidden = true;
+            profileForm.hidden = true;
+            dashboard.hidden = true;
+            accountMessage.textContent = 'Choisissez un nouveau mot de passe pour votre compte.';
+            return;
+        }
+
         const user = session && session.user;
         if (!user) {
             window.currentUser = null;
             window.currentProfile = null;
             form.hidden = false;
             signOutButton.hidden = true;
+            passwordResetButton.hidden = false;
+            passwordResetForm.hidden = true;
             profileForm.hidden = true;
             dashboard.hidden = true;
             accountMessage.textContent = 'Connectez-vous ou créez un compte pour continuer.';
@@ -80,6 +97,8 @@ function initAccountForm(client) {
         window.currentUser = user;
         window.currentProfile = profile;
         form.hidden = true;
+        passwordResetButton.hidden = true;
+        passwordResetForm.hidden = true;
         signOutButton.hidden = false;
         profileForm.hidden = false;
         dashboard.hidden = false;
@@ -101,7 +120,14 @@ function initAccountForm(client) {
             const password = document.getElementById('account-password').value;
             const mode = document.getElementById('account-mode').value;
             const result = mode === 'signup'
-                ? await client.auth.signUp({ email, password, options: { data: { role: expectedRole } } })
+                ? await client.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { role: expectedRole },
+                        emailRedirectTo: new URL(window.location.pathname, window.location.origin).href
+                    }
+                })
                 : await client.auth.signInWithPassword({ email, password });
 
             if (result.error) throw result.error;
@@ -123,6 +149,55 @@ function initAccountForm(client) {
         }
     });
 
+    passwordResetButton.addEventListener('click', async () => {
+        const email = formValue('account-email');
+        if (!email) {
+            document.getElementById('account-email').focus();
+            showToast('Saisissez votre adresse e-mail pour recevoir le lien de réinitialisation.', 'error');
+            return;
+        }
+        passwordResetButton.disabled = true;
+        try {
+            const redirectUrl = new URL(window.location.pathname, window.location.origin);
+            redirectUrl.searchParams.set('mode', 'recovery');
+            const { error } = await client.auth.resetPasswordForEmail(email, {
+                redirectTo: redirectUrl.href
+            });
+            if (error) throw error;
+            accountMessage.textContent = 'Si un compte correspond à cette adresse, un e-mail de réinitialisation va être envoyé.';
+            showToast('Vérifiez votre boîte e-mail pour réinitialiser votre mot de passe.', 'success');
+        } catch (error) {
+            displayError(error, 'Impossible d’envoyer le lien de réinitialisation.');
+        } finally {
+            passwordResetButton.disabled = false;
+        }
+    });
+
+    passwordResetForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const newPassword = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        if (newPassword !== confirmPassword) {
+            showToast('Les deux mots de passe ne correspondent pas.', 'error');
+            return;
+        }
+        setFormBusy(passwordResetForm, true);
+        try {
+            const { error } = await client.auth.updateUser({ password: newPassword });
+            if (error) throw error;
+            isRecoveryMode = false;
+            window.history.replaceState({}, '', window.location.pathname);
+            const { data, error: sessionError } = await client.auth.getSession();
+            if (sessionError) throw sessionError;
+            await refreshAccount(data.session);
+            showToast('Votre mot de passe a été mis à jour.', 'success');
+        } catch (error) {
+            displayError(error, 'Impossible de mettre à jour votre mot de passe.');
+        } finally {
+            setFormBusy(passwordResetForm, false);
+        }
+    });
+
     signOutButton.addEventListener('click', async () => {
         const { error } = await client.auth.signOut();
         if (error) {
@@ -137,6 +212,11 @@ function initAccountForm(client) {
         else return refreshAccount(data.session);
     });
     client.auth.onAuthStateChange((_event, session) => {
+        if (_event === 'PASSWORD_RECOVERY') {
+            isRecoveryMode = true;
+            refreshAccount(session);
+            return;
+        }
         refreshAccount(session);
     });
 }
