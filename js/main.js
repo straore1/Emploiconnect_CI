@@ -192,9 +192,10 @@ function renderCategoriesGrid() {
         'fa-bullhorn', 'fa-folder-open', 'fa-concierge-bell', 'fa-graduation-cap', 'fa-tools'
     ];
     container.innerHTML = JOB_CATEGORIES.map((category, index) => `
-        <a class="category-card" href="offres.html?cat=${encodeURIComponent(category)}">
+        <a class="category-card" href="offres.html?cat=${encodeURIComponent(category)}" aria-label="Voir les offres du secteur ${escapeHTML(category)}">
             <i class="fas ${icons[index]}"></i>
             <h3>${escapeHTML(category)}</h3>
+            <span>Voir les offres <i class="fas fa-arrow-right"></i></span>
         </a>
     `).join('');
 }
@@ -214,9 +215,10 @@ async function renderFeaturedJobs(client) {
 }
 
 function initHomeSearch() {
-    const button = document.getElementById('home-search-btn');
-    if (!button) return;
-    button.addEventListener('click', () => {
+    const form = document.getElementById('home-search-form');
+    if (!form) return;
+    form.addEventListener('submit', event => {
+        event.preventDefault();
         const params = new URLSearchParams();
         const keyword = document.getElementById('search-keyword').value.trim();
         const city = document.getElementById('search-city').value;
@@ -224,7 +226,8 @@ function initHomeSearch() {
         if (keyword) params.set('q', keyword);
         if (city) params.set('city', city);
         if (category) params.set('cat', category);
-        window.location.href = `offres.html?${params.toString()}`;
+        const query = params.toString();
+        window.location.href = query ? `offres.html?${query}` : 'offres.html';
     });
 }
 
