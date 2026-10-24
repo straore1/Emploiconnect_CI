@@ -39,26 +39,52 @@
     <section class="container" style="padding-top: 3rem;">
         <div class="section-title">
             <h1>Espace Recruteur : Publiez une Offre</h1>
-            <p>Diffusez votre annonce d'emploi, de stage ou d'alternance sur le réseau local EmploiConnect CI</p>
+            <p>Publiez vos offres et gérez les candidatures reçues sur EmploiConnect CI</p>
         </div>
 
         <div class="form-container">
             <div style="background: var(--primary-light); padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
                 <p style="font-size: 0.9rem; color: var(--text-color);">
-                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Mode Démo Local :</strong> L'offre publiée sera ajoutée immédiatement dans la liste des offres consultables sur votre navigateur via <code>localStorage</code> (aucun serveur distant requis).
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Votre espace professionnel :</strong> Gérez ici les offres et candidatures associées à votre compte.
                 </p>
             </div>
 
-            <form id="recruiter-offer-form">
+            <div class="form-container" id="account-panel">
+                <h2>Votre compte recruteur</h2>
+                <p id="account-message" aria-live="polite">Connectez-vous ou créez un compte recruteur pour publier et gérer vos offres.</p>
+                <form id="account-form" data-role="recruiter">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="account-email">Adresse e-mail</label>
+                            <input type="email" id="account-email" autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="account-password">Mot de passe (8 caractères minimum)</label>
+                            <input type="password" id="account-password" autocomplete="current-password" minlength="8" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-mode">Action</label>
+                        <select id="account-mode">
+                            <option value="signin">Se connecter</option>
+                            <option value="signup">Créer un compte recruteur</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Continuer</button>
+                </form>
+                <button id="signout-button" class="btn btn-outline" type="button" hidden>Se déconnecter</button>
+            </div>
+
+            <form id="recruiter-offer-form" hidden>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="rec-company">Nom de l'entreprise *</label>
-                        <input type="text" id="rec-company" required placeholder="Ex: Abidjan Digital Corp">
+                        <input type="text" id="rec-company" maxlength="150" required placeholder="Ex: Abidjan Digital Corp">
                     </div>
 
                     <div class="form-group">
                         <label for="rec-title">Titre du poste *</label>
-                        <input type="text" id="rec-title" required placeholder="Ex: Chef de Projet Marketing Digital">
+                        <input type="text" id="rec-title" maxlength="150" required placeholder="Ex: Chef de Projet Marketing Digital">
                     </div>
 
                     <div class="form-group">
@@ -85,6 +111,8 @@
                             <option value="CDI">CDI</option>
                             <option value="CDD">CDD</option>
                             <option value="Stage">Stage</option>
+                            <option value="Alternance">Alternance</option>
+                            <option value="Freelance">Freelance</option>
                         </select>
                     </div>
 
@@ -102,12 +130,12 @@
 
                     <div class="form-group">
                         <label for="rec-quartier">Quartier / Précision lieu</label>
-                        <input type="text" id="rec-quartier" placeholder="Ex: Plateau, Cocody, Zone 4...">
+                        <input type="text" id="rec-quartier" maxlength="120" placeholder="Ex: Plateau, Cocody, Zone 4...">
                     </div>
 
                     <div class="form-group">
                         <label for="rec-salary">Rémunération / Salaire indicatif</label>
-                        <input type="text" id="rec-salary" placeholder="Ex: 400 000 - 600 000 FCFA">
+                        <input type="text" id="rec-salary" maxlength="200" placeholder="Ex: 400 000 - 600 000 FCFA">
                     </div>
 
                     <div class="form-group">
@@ -122,44 +150,48 @@
 
                     <div class="form-group">
                         <label for="rec-edu">Niveau d'études requis</label>
-                        <input type="text" id="rec-edu" placeholder="Ex: Bac+3 / Bac+5 en Informatique">
+                        <input type="text" id="rec-edu" maxlength="150" placeholder="Ex: Bac+3 / Bac+5 en Informatique">
                     </div>
 
                     <div class="form-group">
                         <label for="rec-email">E-mail de contact RH *</label>
-                        <input type="email" id="rec-email" required placeholder="Ex: rh@monentreprise.ci">
+                        <input type="email" id="rec-email" maxlength="254" required placeholder="Ex: rh@monentreprise.ci">
                     </div>
 
                     <div class="form-group">
                         <label for="rec-phone">Téléphone de contact</label>
-                        <input type="tel" id="rec-phone" placeholder="Ex: +225 27 20 00 00 00">
+                        <input type="tel" id="rec-phone" maxlength="40" placeholder="Ex: +225 27 20 00 00 00">
                     </div>
 
                     <div class="form-group full-width">
                         <label for="rec-desc">Description complète du poste *</label>
-                        <textarea id="rec-desc" required placeholder="Présentation de l'offre et du contexte..."></textarea>
+                        <textarea id="rec-desc" minlength="20" maxlength="10000" required placeholder="Présentation de l'offre et du contexte..."></textarea>
                     </div>
 
                     <div class="form-group full-width">
                         <label for="rec-missions">Missions principales (une par ligne)</label>
-                        <textarea id="rec-missions" placeholder="Mission 1&#10;Mission 2&#10;Mission 3"></textarea>
+                        <textarea id="rec-missions" maxlength="5000" placeholder="Mission 1&#10;Mission 2&#10;Mission 3"></textarea>
                     </div>
 
                     <div class="form-group full-width">
                         <label for="rec-skills">Compétences clés (séparées par des virgules)</label>
-                        <input type="text" id="rec-skills" placeholder="Ex: React, Node.js, Gestion de projet, Rigueur">
+                        <input type="text" id="rec-skills" maxlength="5000" placeholder="Ex: React, Node.js, Gestion de projet, Rigueur">
                     </div>
 
                     <div class="form-group full-width">
                         <label for="rec-profile">Profil recherché</label>
-                        <textarea id="rec-profile" placeholder="Qualités, formation, savoir-être attendus..."></textarea>
+                        <textarea id="rec-profile" maxlength="5000" placeholder="Qualités, formation, savoir-être attendus..."></textarea>
                     </div>
                 </div>
 
                 <div style="margin-top: 2rem; text-align: center;">
-                    <button type="submit" class="btn btn-accent" style="padding: 0.875rem 2.5rem;"><i class="fas fa-paper-plane"></i> Publier l'offre localement</button>
+                    <button type="submit" class="btn btn-accent" style="padding: 0.875rem 2.5rem;"><i class="fas fa-paper-plane"></i> Publier l'offre</button>
                 </div>
             </form>
+            <section id="recruiter-dashboard" class="form-container" hidden>
+                <h2>Mes offres et candidatures</h2>
+                <div id="recruiter-dashboard-list" aria-live="polite"></div>
+            </section>
         </div>
     </section>
 
@@ -180,19 +212,19 @@
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h3>Informations Légales</h3>
+                    <h3>Confidentialité</h3>
                     <ul>
-                        <li><a href="contact.html">Mentions Légales</a></li>
-                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                        <li><a href="contact.html">Nous contacter</a></li>
+                        <li><a href="contact.html#confidentialite">Données personnelles</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h3>Contact</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;"><a href="contact.html">Écrivez-nous via le formulaire de contact.</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+                <p>&copy; 2026 EmploiConnect CI.</p>
             </div>
         </div>
     </footer>
@@ -201,6 +233,9 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script src="js/forms.js"></script>

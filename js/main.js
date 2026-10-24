@@ -1,34 +1,20 @@
-// js/main.js - Logique principale, recherche, filtres, favoris et interactions pour EmploiConnect CI
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initTheme();
     initMobileMenu();
     initBackToTop();
     renderHeaderNav();
 
-    // Check if on home page
+    const client = await window.backendReady;
+    await window.authReady;
     if (document.getElementById('recent-jobs-container')) {
-        renderFeaturedJobs();
         renderCategoriesGrid();
-        renderPartners();
-        renderTestimonials();
         initHomeSearch();
+        await renderFeaturedJobs(client);
     }
-
-    // Check if on offers page
-    if (document.getElementById('all-jobs-container')) {
-        initOffersPage();
-    }
-
-    // Check if on detail offer page
-    if (document.getElementById('job-detail-container')) {
-        initJobDetailPage();
-    }
-
-    // Check if on favorites page (if any) or shared features
+    if (document.getElementById('all-jobs-container')) await initOffersPage(client);
+    if (document.getElementById('job-detail-container')) await initJobDetailPage(client);
 });
 
-// Toast notification function
 function showToast(message, type = 'success') {
     let container = document.querySelector('.toast-container');
     if (!container) {
@@ -38,487 +24,405 @@ function showToast(message, type = 'success') {
     }
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    const icon = type === 'success' ? '<i class="fas fa-check-circle" style="color:var(--accent-green)"></i>' : '<i class="fas fa-exclamation-circle" style="color:#dc3545"></i>';
+    const icon = type === 'success'
+        ? '<i class="fas fa-check-circle" style="color:var(--accent-green)"></i>'
+        : '<i class="fas fa-exclamation-circle" style="color:#dc3545"></i>';
     toast.innerHTML = `${icon} <span>${escapeHTML(message)}</span>`;
     container.appendChild(toast);
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+    setTimeout(() => toast.remove(), 4000);
 }
 
-// XSS protection
-function escapeHTML(str) {
-    if (!str) return '';
-    return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
+function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+    })[character]);
 }
 
-// Theme management
 function initTheme() {
-    const savedTheme = localStorage.getItem('emploiconnect_theme') || 'light';
+    const savedTheme = readLocalPreference('emploiconnect_theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
-    
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        updateThemeIcon(savedTheme);
-        toggleBtn.addEventListener('click', () => {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('emploiconnect_theme', next);
-            updateThemeIcon(next);
-        });
+    const toggle = document.getElementById('theme-toggle');
+    if (!toggle) return;
+    updateThemeIcon(savedTheme);
+    toggle.addEventListener('click', () => {
+        const nextTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+        writeLocalPreference('emploiconnect_theme', nextTheme);
+        updateThemeIcon(nextTheme);
+    });
+}
+
+function readLocalPreference(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.error('Impossible de lire les préférences locales.', error);
+        return null;
+    }
+}
+
+function writeLocalPreference(key, value) {
+    try {
+        localStorage.setItem(key, value);
+        return true;
+    } catch (error) {
+        console.error('Impossible d’enregistrer les préférences locales.', error);
+        showToast('Le navigateur ne permet pas d’enregistrer cette préférence.', 'error');
+        return false;
     }
 }
 
 function updateThemeIcon(theme) {
-    const toggleBtn = document.getElementById('theme-toggle');
-    if (toggleBtn) {
-        toggleBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    }
+    const toggle = document.getElementById('theme-toggle');
+    if (toggle) toggle.innerHTML = theme === 'dark'
+        ? '<i class="fas fa-sun"></i>'
+        : '<i class="fas fa-moon"></i>';
 }
 
-// Mobile menu
 function initMobileMenu() {
-    const btn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-    if (btn && navLinks) {
-        btn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            btn.innerHTML = navLinks.classList.contains('active') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        });
-    }
+    const button = document.querySelector('.mobile-menu-btn');
+    const links = document.querySelector('.nav-links');
+    if (!button || !links) return;
+    button.addEventListener('click', () => {
+        links.classList.toggle('active');
+        button.innerHTML = links.classList.contains('active')
+            ? '<i class="fas fa-times"></i>'
+            : '<i class="fas fa-bars"></i>';
+    });
 }
 
-// Back to top button
 function initBackToTop() {
-    const btn = document.getElementById('back-to-top');
-    if (!btn) return;
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            btn.classList.add('visible');
-        } else {
-            btn.classList.remove('visible');
-        }
-    });
-    btn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const button = document.getElementById('back-to-top');
+    if (!button) return;
+    window.addEventListener('scroll', () => button.classList.toggle('visible', window.scrollY > 300));
+    button.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+
+function renderHeaderNav() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        if (link.getAttribute('href') === currentPage) link.classList.add('active');
     });
 }
 
-// Favorites management in localStorage
 function getFavorites() {
     try {
-        return JSON.parse(localStorage.getItem('emploiconnect_favorites')) || [];
-    } catch(e) {
+        const favorites = JSON.parse(readLocalPreference('emploiconnect_favorites') || '[]');
+        return Array.isArray(favorites) ? favorites : [];
+    } catch (error) {
+        console.error('Impossible de lire les favoris enregistrés.', error);
         return [];
     }
 }
 
 function toggleFavorite(jobId) {
-    let favs = getFavorites();
-    const index = favs.indexOf(jobId);
-    if (index > -1) {
-        favs.splice(index, 1);
-        showToast("Offre retirée de vos favoris", "success");
-    } else {
-        favs.push(jobId);
-        showToast("Offre ajoutée à vos favoris (sauvegardé localement)", "success");
-    }
-    localStorage.setItem('emploiconnect_favorites', JSON.stringify(favs));
-    
-    // Update UI buttons
-    document.querySelectorAll(`.favorite-btn[data-id="${jobId}"]`).forEach(btn => {
-        btn.classList.toggle('active', favs.includes(jobId));
-        btn.innerHTML = favs.includes(jobId) ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>';
+    const favorites = getFavorites();
+    const index = favorites.indexOf(jobId);
+    if (index < 0) favorites.push(jobId);
+    else favorites.splice(index, 1);
+    if (!writeLocalPreference('emploiconnect_favorites', JSON.stringify(favorites))) return;
+    document.querySelectorAll('.favorite-btn').forEach(button => {
+        if (button.dataset.id !== jobId) return;
+        const isFavorite = favorites.includes(jobId);
+        button.classList.toggle('active', isFavorite);
+        button.innerHTML = isFavorite
+            ? '<i class="fas fa-heart"></i>'
+            : '<i class="far fa-heart"></i>';
     });
+    showToast(index < 0 ? 'Offre ajoutée à vos favoris.' : 'Offre retirée de vos favoris.');
 }
 
-// Helper to render a job card HTML safely
+function mapJob(row) {
+    return {
+        ...row,
+        date: new Date(row.created_at).toLocaleDateString('fr-FR'),
+        createdAt: row.created_at,
+        contactEmail: row.contact_email,
+        contactPhone: row.contact_phone
+    };
+}
+
+async function getAllOffers(client) {
+    if (!client) throw new Error('Le service des offres n’est pas configuré. Consultez README.md.');
+    const { data, error } = await client
+        .from('jobs')
+        .select('id,title,company,city,quartier,category,contract,salary,experience,education,description,missions,skills,profile,contact_email,contact_phone,status,created_at')
+        .eq('status', 'published')
+        .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data.map(mapJob);
+}
+
 function createJobCardHTML(job) {
-    const favs = getFavorites();
-    const isFav = favs.includes(job.id);
-    const initials = job.company.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
-    
+    const isFavorite = getFavorites().includes(job.id);
+    const initials = job.company.split(/\s+/).map(word => word[0]).join('').slice(0, 2).toUpperCase();
     return `
-        <div class="job-card">
+        <article class="job-card">
             <div>
                 <div class="job-card-header">
                     <div class="job-company-logo">${escapeHTML(initials)}</div>
-                    <button class="favorite-btn ${isFav ? 'active' : ''}" data-id="${job.id}" onclick="toggleFavorite(${job.id})" title="Ajouter aux favoris">
-                        <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${escapeHTML(job.id)}" onclick="toggleFavorite('${escapeHTML(job.id)}')" aria-label="${isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}">
+                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i>
                     </button>
                 </div>
-                <h3 class="job-title"><a href="detail-offre.html?id=${job.id}">${escapeHTML(job.title)}</a></h3>
-                <p class="job-company"><i class="fas fa-building"></i> ${escapeHTML(job.company)} - <i class="fas fa-map-marker-alt" style="color:var(--accent-color)"></i> ${escapeHTML(job.city)} (${escapeHTML(job.quartier)})</p>
-                
+                <h3 class="job-title"><a href="detail-offre.html?id=${encodeURIComponent(job.id)}">${escapeHTML(job.title)}</a></h3>
+                <p class="job-company"><i class="fas fa-building"></i> ${escapeHTML(job.company)} · <i class="fas fa-map-marker-alt"></i> ${escapeHTML(job.city)} (${escapeHTML(job.quartier)})</p>
                 <div class="job-tags">
                     <span class="tag contract">${escapeHTML(job.contract)}</span>
                     <span class="tag"><i class="fas fa-briefcase"></i> ${escapeHTML(job.experience)}</span>
                     <span class="tag"><i class="fas fa-graduation-cap"></i> ${escapeHTML(job.category)}</span>
                 </div>
             </div>
-            
             <div class="job-footer">
-                <div>
-                    <div class="job-salary">${escapeHTML(job.salary)}</div>
-                    <div class="job-date">Publié le ${escapeHTML(job.date)}</div>
-                </div>
-                <a href="detail-offre.html?id=${job.id}" class="btn btn-outline btn-sm">Voir l'offre</a>
+                <div><div class="job-salary">${escapeHTML(job.salary)}</div><div class="job-date">Publié le ${escapeHTML(job.date)}</div></div>
+                <a href="detail-offre.html?id=${encodeURIComponent(job.id)}" class="btn btn-outline btn-sm">Voir l’offre</a>
             </div>
-        </div>
-    `;
-}
-
-// Home page renderers
-function renderFeaturedJobs() {
-    const container = document.getElementById('recent-jobs-container');
-    if (!container) return;
-    
-    // Get combined demo offers + user published local offers from localStorage
-    const allOffers = getAllOffers();
-    const recent = allOffers.slice(0, 6); // Top 6
-    
-    container.innerHTML = recent.map(job => createJobCardHTML(job)).join('');
+        </article>`;
 }
 
 function renderCategoriesGrid() {
     const container = document.getElementById('categories-grid');
     if (!container) return;
-    
-    const allOffers = getAllOffers();
-    const categories = [
-        { name: "Informatique et développement web", icon: "fas fa-laptop-code" },
-        { name: "Comptabilité et finance", icon: "fas fa-calculator" },
-        { name: "Commerce et vente", icon: "fas fa-chart-line" },
-        { name: "Transport et logistique", icon: "fas fa-truck" },
-        { name: "Ressources humaines", icon: "fas fa-users" },
-        { name: "Marketing et communication", icon: "fas fa-bullhorn" },
-        { name: "Administration", icon: "fas fa-folder-open" },
-        { name: "Hôtellerie et restauration", icon: "fas fa-concierge-bell" },
-        { name: "Stages et emplois débutants", icon: "fas fa-graduation-cap" },
-        { name: "Métiers techniques et artisanaux", icon: "fas fa-tools" }
+    const icons = [
+        'fa-laptop-code', 'fa-calculator', 'fa-chart-line', 'fa-truck', 'fa-users',
+        'fa-bullhorn', 'fa-folder-open', 'fa-concierge-bell', 'fa-graduation-cap', 'fa-tools'
     ];
-    
-    container.innerHTML = categories.map(cat => {
-        const count = allOffers.filter(o => o.category === cat.name).length;
-        return `
-            <div class="category-card" onclick="location.href='offres.html?cat=${encodeURIComponent(cat.name)}'">
-                <i class="${cat.icon}"></i>
-                <h3>${escapeHTML(cat.name)}</h3>
-                <span>${count} offre(s) disponible(s)</span>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderPartners() {
-    const container = document.getElementById('partners-scroll');
-    if (!container) return;
-    container.innerHTML = DEMO_COMPANIES.map(p => `
-        <div class="partner-badge">
-            <span>${p.logo}</span>
-            <div>
-                <strong>${escapeHTML(p.name)}</strong>
-                <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHTML(p.sector)}</div>
-            </div>
-        </div>
+    container.innerHTML = JOB_CATEGORIES.map((category, index) => `
+        <a class="category-card" href="offres.html?cat=${encodeURIComponent(category)}">
+            <i class="fas ${icons[index]}"></i>
+            <h3>${escapeHTML(category)}</h3>
+        </a>
     `).join('');
 }
 
-function renderTestimonials() {
-    const container = document.getElementById('testimonials-grid');
+async function renderFeaturedJobs(client) {
+    const container = document.getElementById('recent-jobs-container');
     if (!container) return;
-    container.innerHTML = DEMO_TESTIMONIALS.map(t => `
-        <div class="testimonial-card">
-            <p>"${escapeHTML(t.text)}"</p>
-            <div class="testimonial-author">
-                <h4>${escapeHTML(t.name)}</h4>
-                <span>${escapeHTML(t.role)}</span>
-            </div>
-        </div>
-    `).join('');
+    try {
+        const jobs = await getAllOffers(client);
+        container.innerHTML = jobs.length
+            ? jobs.slice(0, 6).map(createJobCardHTML).join('')
+            : '<p>Aucune offre publiée pour le moment. Revenez bientôt pour découvrir les nouvelles opportunités.</p>';
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p role="alert">Impossible de charger les offres. Vérifiez la configuration Supabase.</p>';
+    }
 }
 
 function initHomeSearch() {
-    const btn = document.getElementById('home-search-btn');
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-        const keyword = document.getElementById('search-keyword').value;
+    const button = document.getElementById('home-search-btn');
+    if (!button) return;
+    button.addEventListener('click', () => {
+        const params = new URLSearchParams();
+        const keyword = document.getElementById('search-keyword').value.trim();
         const city = document.getElementById('search-city').value;
         const category = document.getElementById('search-category').value;
-        
-        const params = new URLSearchParams();
         if (keyword) params.set('q', keyword);
         if (city) params.set('city', city);
         if (category) params.set('cat', category);
-        
         window.location.href = `offres.html?${params.toString()}`;
     });
 }
 
-// Get all offers (DEMO_OFFRES + localStorage published offers)
-function getAllOffers() {
-    let customOffers = [];
-    try {
-        customOffers = JSON.parse(localStorage.getItem('emploiconnect_custom_offers')) || [];
-    } catch(e) {
-        customOffers = [];
-    }
-    // Combine both, custom first
-    return [...customOffers, ...DEMO_OFFRES];
-}
-
-// Offers page filtering and searching
-function initOffersPage() {
+async function initOffersPage(client) {
     const container = document.getElementById('all-jobs-container');
-    const countSpan = document.getElementById('results-count');
-    const searchInput = document.getElementById('filter-search');
-    const citySelect = document.getElementById('filter-city');
-    const catSelect = document.getElementById('filter-category');
-    const contractSelect = document.getElementById('filter-contract');
-    const sortSelect = document.getElementById('filter-sort');
-    const resetBtn = document.getElementById('reset-filters');
-    
-    // Parse URL params if any
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('q') && searchInput) searchInput.value = urlParams.get('q');
-    if (urlParams.get('city') && citySelect) citySelect.value = urlParams.get('city');
-    if (urlParams.get('cat') && catSelect) catSelect.value = urlParams.get('cat');
-    
+    const count = document.getElementById('results-count');
+    const search = document.getElementById('filter-search');
+    const city = document.getElementById('filter-city');
+    const category = document.getElementById('filter-category');
+    const contract = document.getElementById('filter-contract');
+    const sort = document.getElementById('filter-sort');
+    const reset = document.getElementById('reset-filters');
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('q')) search.value = params.get('q');
+    if (params.has('city')) city.value = params.get('city');
+    if (params.has('cat')) category.value = params.get('cat');
+
+    let jobs;
+    try {
+        jobs = await getAllOffers(client);
+    } catch (error) {
+        console.error(error);
+        count.textContent = 'Offres indisponibles';
+        container.innerHTML = '<p role="alert">Impossible de charger les offres. Vérifiez la configuration Supabase.</p>';
+        return;
+    }
+
     function applyFilters() {
-        let offers = getAllOffers();
-        
-        const q = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const city = citySelect ? citySelect.value : '';
-        const cat = catSelect ? catSelect.value : '';
-        const contract = contractSelect ? contractSelect.value : '';
-        const sort = sortSelect ? sortSelect.value : 'recent';
-        
-        if (q) {
-            offers = offers.filter(o => 
-                o.title.toLowerCase().includes(q) || 
-                o.company.toLowerCase().includes(q) || 
-                o.description.toLowerCase().includes(q) ||
-                o.skills.some(s => s.toLowerCase().includes(q))
-            );
-        }
-        if (city) {
-            offers = offers.filter(o => o.city === city);
-        }
-        if (cat) {
-            offers = offers.filter(o => o.category === cat);
-        }
-        if (contract) {
-            offers = offers.filter(o => o.contract === contract);
-        }
-        
-        // Sorting
-        if (sort === 'recent') {
-            offers.sort((a, b) => new Date(b.date) - new Date(a.date));
-        } else if (sort === 'oldest') {
-            offers.sort((a, b) => new Date(a.date) - new Date(b.date));
-        } else if (sort === 'title') {
-            offers.sort((a, b) => a.title.localeCompare(b.title));
-        }
-        
-        // Render
-        if (countSpan) countSpan.textContent = `${offers.length} offre(s) trouvée(s)`;
-        
-        if (offers.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--border-color);">
-                    <i class="fas fa-search" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;">}</i>
-                    <h3>Aucune offre ne correspond à vos critères</h3>
-                    <p style="color: var(--text-muted); margin-top: 0.5rem;">Essayez de modifier vos filtres ou d'élargir votre recherche.</p>
-                </div>
-            `;
-        } else {
-            container.innerHTML = offers.map(o => createJobCardHTML(o)).join('');
-        }
-    }
-    
-    [searchInput, citySelect, catSelect, contractSelect, sortSelect].forEach(el => {
-        if (el) {
-            el.addEventListener('input', applyFilters);
-            el.addEventListener('change', applyFilters);
-        }
-    });
-    
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            if (searchInput) searchInput.value = '';
-            if (citySelect) citySelect.value = '';
-            if (catSelect) catSelect.value = '';
-            if (contractSelect) contractSelect.value = '';
-            if (sortSelect) sortSelect.value = 'recent';
-            applyFilters();
-            showToast("Filtres réinitialisés", "success");
+        const keyword = search.value.trim().toLocaleLowerCase('fr');
+        let filtered = jobs.filter(job => {
+            const searchable = [job.title, job.company, job.description, ...(job.skills || [])]
+                .join(' ')
+                .toLocaleLowerCase('fr');
+            return (!keyword || searchable.includes(keyword))
+                && (!city.value || job.city === city.value)
+                && (!category.value || job.category === category.value)
+                && (!contract.value || job.contract === contract.value);
         });
+        if (sort.value === 'recent') filtered.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+        if (sort.value === 'oldest') filtered.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+        if (sort.value === 'title') filtered.sort((a, b) => a.title.localeCompare(b.title, 'fr'));
+        count.textContent = `${filtered.length} offre(s) trouvée(s)`;
+        container.innerHTML = filtered.length
+            ? filtered.map(createJobCardHTML).join('')
+            : '<p style="grid-column:1/-1;text-align:center;padding:3rem;">Aucune offre ne correspond à vos critères.</p>';
     }
-    
+
+    [search, city, category, contract, sort].forEach(element => {
+        element.addEventListener('input', applyFilters);
+        element.addEventListener('change', applyFilters);
+    });
+    reset.addEventListener('click', () => {
+        search.value = '';
+        city.value = '';
+        category.value = '';
+        contract.value = '';
+        sort.value = 'recent';
+        applyFilters();
+    });
     applyFilters();
 }
 
-// Job detail page
-function initJobDetailPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = parseInt(urlParams.get('id'));
+async function initJobDetailPage(client) {
     const container = document.getElementById('job-detail-container');
-    
-    if (!id || !container) {
-        container.innerHTML = "<p>Offre introuvable.</p>";
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!id) {
+        container.textContent = 'Offre introuvable.';
         return;
     }
-    
-    const allOffers = getAllOffers();
-    const job = allOffers.find(o => o.id === id);
-    
-    if (!job) {
-        container.innerHTML = "<p>Cette offre n'existe plus ou a été retirée.</p>";
-        return;
-    }
-    
-    const favs = getFavorites();
-    const isFav = favs.includes(job.id);
-    
-    container.innerHTML = `
-        <div style="background: var(--card-bg); padding: 2.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: var(--shadow);">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
-                <div>
-                    <span class="tag contract" style="margin-bottom: 0.5rem; display: inline-block;">${escapeHTML(job.contract)}</span>
-                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">${escapeHTML(job.title)}</h1>
-                    <p style="font-size: 1.1rem; color: var(--text-muted);"><i class="fas fa-building"></i> ${escapeHTML(job.company)} | <i class="fas fa-map-marker-alt" style="color:var(--accent-color)"></i> ${escapeHTML(job.city)} (${escapeHTML(job.quartier)})</p>
-                </div>
-                <div style="display: flex; gap: 1rem; align-items: center;">
-                    <button class="favorite-btn ${isFav ? 'active' : ''}" data-id="${job.id}" onclick="toggleFavorite(${job.id})" style="font-size: 1.5rem; background: var(--bg-color); padding: 0.5rem 1rem; border-radius: var(--radius); border: 1px solid var(--border-color);">
-                        <i class="${isFav ? 'fas' : 'far'} fa-heart"></i> ${isFav ? 'Favoris' : 'Enregistrer'}
-                    </button>
-                    <button onclick="copyJobLink()" class="btn btn-outline" style="padding: 0.5rem 1rem;">
-                        <i class="fas fa-share-alt"></i> Partager
-                    </button>
-                </div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; background: var(--bg-color); padding: 1.25rem; border-radius: var(--radius); margin-bottom: 2rem; border: 1px solid var(--border-color);">
-                <div>
-                    <div style="font-size:0.85rem; color:var(--text-muted);">Rémunération</div>
-                    <div style="font-weight:700; color:var(--accent-green); font-size:1.1rem;">${escapeHTML(job.salary)}</div>
-                </div>
-                <div>
-                    <div style="font-size:0.85rem; color:var(--text-muted);">Expérience requise</div>
-                    <div style="font-weight:600;">${escapeHTML(job.experience)}</div>
-                </div>
-                <div>
-                    <div style="font-size:0.85rem; color:var(--text-muted);">Niveau d'études</div>
-                    <div style="font-weight:600;">${escapeHTML(job.education)}</div>
-                </div>
-                <div>
-                    <div style="font-size:0.85rem; color:var(--text-muted);">Date de publication</div>
-                    <div style="font-weight:600;">${escapeHTML(job.date)}</div>
-                </div>
-            </div>
-
-            <h3 style="margin-bottom: 0.75rem; font-size: 1.25rem;">Description du poste</h3>
-            <p style="margin-bottom: 2rem; color: var(--text-color);">${escapeHTML(job.description)}</p>
-
-            <h3 style="margin-bottom: 0.75rem; font-size: 1.25rem;">Missions principales</h3>
-            <ul style="margin-bottom: 2rem; padding-left: 1.5rem; list-style: disc;">
-                ${job.missions.map(m => `<li style="margin-bottom: 0.5rem;">${escapeHTML(m)}</li>`).join('')}
-            </ul>
-
-            <h3 style="margin-bottom: 0.75rem; font-size: 1.25rem;">Compétences recherchées</h3>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;">
-                ${job.skills.map(s => `<span class="tag" style="background: var(--primary-light); color: var(--primary-color); font-weight:600;">${escapeHTML(s)}</span>`).join('')}
-            </div>
-
-            <h3 style="margin-bottom: 0.75rem; font-size: 1.25rem;">Profil recherché</h3>
-            <p style="margin-bottom: 2.5rem; color: var(--text-color);">${escapeHTML(job.profile)}</p>
-
-            <div style="background: var(--primary-light); padding: 2rem; border-radius: var(--radius); text-align: center; border: 1px solid var(--primary-color);">
-                <h3 style="margin-bottom: 0.5rem; color: var(--text-color);">Intéressé(e) par cette opportunité ?</h3>
-                <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Postulez directement en envoyant votre dossier de candidature ou contactez le recruteur.</p>
-                <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                    <button onclick="openApplyModal('${escapeHTML(job.title)}', '${escapeHTML(job.company)}')" class="btn btn-primary">
-                        <i class="fas fa-paper-plane"></i> Postuler maintenant
-                    </button>
-                    <a href="mailto:${job.contactEmail}?subject=Candidature - ${encodeURIComponent(job.title)}" class="btn btn-outline">
-                        <i class="fas fa-envelope"></i> ${escapeHTML(job.contactEmail)}
-                    </a>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function copyJobLink() {
-    navigator.clipboard.writeText(window.location.href);
-    showToast("Lien de l'offre copié dans le presse-papier !", "success");
-}
-
-function openApplyModal(title, company) {
-    let modal = document.getElementById('apply-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'apply-modal';
-        modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:10000; padding:1rem;";
-        modal.innerHTML = `
-            <div style="background:var(--card-bg); padding:2rem; border-radius:var(--radius); max-width:600px; width:100%; box-shadow:var(--shadow-lg); border:1px solid var(--border-color); position:relative;">
-                <button onclick="document.getElementById('apply-modal').remove()" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted);">&times;</button>
-                <h2 style="margin-bottom:0.5rem;">Candidature</h2>
-                <p id="modal-subtitle" style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.95rem;"></p>
-                
-                <form id="quick-apply-form" onsubmit="handleQuickApply(event)">
-                    <div class="form-group">
-                        <label>Nom et Prénom *</label>
-                        <input type="text" id="qa-name" required placeholder="Ex: Kouassi Jean">
-                    </div>
-                    <div class="form-group">
-                        <label>Adresse e-mail *</label>
-                        <input type="email" id="qa-email" required placeholder="Ex: jean.kouassi@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label>Téléphone *</label>
-                        <input type="tel" id="qa-phone" required placeholder="Ex: +225 07 00 00 00 00">
-                    </div>
-                    <div class="form-group">
-                        <label>Votre CV (PDF ou DOCX, max 5 Mo) *</label>
-                        <input type="file" id="qa-cv" accept=".pdf,.docx" required>
-                        <small style="color:var(--text-muted); font-size:0.8rem;">Le fichier reste strictement local sur votre navigateur.</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Message de motivation (optionnel)</label>
-                        <textarea id="qa-msg" placeholder="Quelques mots pour vous présenter..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Envoyer ma candidature (Simulation Locale)</button>
-                </form>
-            </div>
-        `;
-        document.body.appendChild(modal);
-    }
-    document.getElementById('modal-subtitle').textContent = `Postuler à : ${title} chez ${company}`;
-    modal.style.display = 'flex';
-}
-
-function handleQuickApply(e) {
-    e.preventDefault();
-    const name = document.getElementById('qa-name').value;
-    const email = document.getElementById('qa-email').value;
-    const cvInput = document.getElementById('qa-cv');
-    
-    if (cvInput.files.length > 0) {
-        const file = cvInput.files[0];
-        if (file.size > 5 * 1024 * 1024) {
-            showToast("Le fichier CV dépasse la taille maximale de 5 Mo.", "error");
+    try {
+        const { data, error } = await client
+            .from('jobs')
+            .select('id,title,company,city,quartier,category,contract,salary,experience,education,description,missions,skills,profile,contact_email,contact_phone,status,created_at')
+            .eq('id', id)
+            .eq('status', 'published')
+            .maybeSingle();
+        if (error) throw error;
+        if (!data) {
+            container.textContent = 'Cette offre n’existe plus ou a été retirée.';
             return;
         }
+        renderJobDetail(container, mapJob(data));
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p role="alert">Impossible de charger cette offre. Vérifiez la configuration Supabase.</p>';
     }
-    
-    showToast(`Candidature envoyée avec succès pour ${name} (${email}) ! (Simulé en local)`, "success");
-    document.getElementById('apply-modal').remove();
 }
 
-function renderHeaderNav() {
-    // Optional dynamic adjustments if needed
+function renderJobDetail(container, job) {
+    const isFavorite = getFavorites().includes(job.id);
+    container.innerHTML = `
+        <article class="job-detail-card" style="background:var(--card-bg);padding:2.5rem;border-radius:var(--radius);border:1px solid var(--border-color);">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;">
+                <div>
+                    <span class="tag contract">${escapeHTML(job.contract)}</span>
+                    <h1>${escapeHTML(job.title)}</h1>
+                    <p>${escapeHTML(job.company)} · ${escapeHTML(job.city)} (${escapeHTML(job.quartier)})</p>
+                </div>
+                <div>
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${escapeHTML(job.id)}" onclick="toggleFavorite('${escapeHTML(job.id)}')">
+                        <i class="${isFavorite ? 'fas' : 'far'} fa-heart"></i> ${isFavorite ? 'Favoris' : 'Enregistrer'}
+                    </button>
+                    <button onclick="copyJobLink()" class="btn btn-outline"><i class="fas fa-share-alt"></i> Partager</button>
+                </div>
+            </div>
+            <div class="job-tags">
+                <span class="tag">${escapeHTML(job.salary)}</span>
+                <span class="tag">${escapeHTML(job.experience)}</span>
+                <span class="tag">${escapeHTML(job.education)}</span>
+                <span class="tag">Publié le ${escapeHTML(job.date)}</span>
+            </div>
+            <h2>Description du poste</h2><p>${escapeHTML(job.description)}</p>
+            <h2>Missions principales</h2>
+            <ul>${(job.missions || []).map(mission => `<li>${escapeHTML(mission)}</li>`).join('')}</ul>
+            <h2>Compétences recherchées</h2>
+            <div class="job-tags">${(job.skills || []).map(skill => `<span class="tag">${escapeHTML(skill)}</span>`).join('')}</div>
+            <h2>Profil recherché</h2><p>${escapeHTML(job.profile)}</p>
+            <div class="apply-callout" style="margin-top:2rem;padding:2rem;text-align:center;background:var(--primary-light);border-radius:var(--radius);">
+                <h2>Intéressé(e) par cette opportunité ?</h2>
+                <p>Postulez avec votre compte candidat. Votre CV sera partagé en privé avec ce recruteur.</p>
+                <button onclick="openApplyModal('${escapeHTML(job.id)}')" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Postuler maintenant</button>
+                <p style="margin-top:1rem;">Contacter le recruteur :
+                    <a href="mailto:${escapeHTML(job.contactEmail)}?subject=${encodeURIComponent(`Candidature - ${job.title}`)}">${escapeHTML(job.contactEmail)}</a>
+                    ${job.contactPhone ? ` · <a href="tel:${escapeHTML(job.contactPhone.replace(/[^\d+]/g, ''))}">${escapeHTML(job.contactPhone)}</a>` : ''}
+                </p>
+            </div>
+        </article>`;
+}
+
+async function copyJobLink() {
+    try {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('Lien de l’offre copié.');
+    } catch (error) {
+        console.error(error);
+        showToast('Impossible de copier le lien. Copiez-le depuis la barre d’adresse.', 'error');
+    }
+}
+
+async function openApplyModal(jobId) {
+    await window.authReady;
+    if (!window.currentUser || !window.currentProfile || window.currentProfile.role !== 'candidate') {
+        showToast('Connectez-vous avec votre compte candidat pour postuler.', 'error');
+        window.location.href = `candidat.html?redirect=${encodeURIComponent(window.location.href)}`;
+        return;
+    }
+    if (!window.currentProfile.cv_path) {
+        showToast('Ajoutez votre CV dans votre espace candidat avant de postuler.', 'error');
+        window.location.href = 'candidat.html';
+        return;
+    }
+
+    const modal = document.createElement('div');
+    modal.id = 'apply-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:10000;padding:1rem;';
+    modal.innerHTML = `
+        <div role="dialog" aria-modal="true" aria-labelledby="apply-title" style="background:var(--card-bg);padding:2rem;border-radius:var(--radius);max-width:600px;width:100%;">
+            <button type="button" data-close-modal aria-label="Fermer" style="float:right;">&times;</button>
+            <h2 id="apply-title">Envoyer ma candidature</h2>
+            <p>Votre profil et votre CV privé seront transmis au recruteur de cette offre.</p>
+            <form id="quick-apply-form">
+                <div class="form-group">
+                    <label for="qa-msg">Message de motivation (facultatif)</label>
+                    <textarea id="qa-msg" maxlength="3000"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;">Envoyer ma candidature</button>
+            </form>
+        </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('[data-close-modal]').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', event => {
+        if (event.target === modal) modal.remove();
+    });
+    modal.querySelector('#quick-apply-form').addEventListener('submit', event => handleQuickApply(event, jobId));
+}
+
+async function handleQuickApply(event, jobId) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+        const client = await window.requireSupabase();
+        const { error } = await client.from('applications').insert({
+            job_id: jobId,
+            candidate_id: window.currentUser.id,
+            cv_path: window.currentProfile.cv_path,
+            message: document.getElementById('qa-msg').value.trim()
+        });
+        if (error) throw error;
+        document.getElementById('apply-modal').remove();
+        showToast('Votre candidature a été envoyée.');
+    } catch (error) {
+        console.error(error);
+        showToast(error.code === '23505'
+            ? 'Vous avez déjà postulé à cette offre.'
+            : error.message || 'Impossible d’envoyer votre candidature.', 'error');
+    } finally {
+        button.disabled = false;
+    }
 }

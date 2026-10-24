@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - EmploiConnect CI</title>
+    <meta name="description" content="Contactez l’équipe EmploiConnect CI pour toute question concernant les offres, votre compte ou vos candidatures.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container navbar">
+            <a href="index.html" class="logo"><i class="fas fa-briefcase"></i> Emploi<span>Connect CI</span></a>
+            <nav class="nav-links">
+                <a href="index.html">Accueil</a>
+                <a href="offres.html">Offres d'emploi</a>
+                <a href="candidat.html">Espace Candidat</a>
+                <a href="recruteur.html">Espace Recruteur</a>
+                <a href="conseils.html">Conseils Carrière</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle" title="Changer de thème"><i class="fas fa-moon"></i></button>
+                <button class="mobile-menu-btn" aria-label="Menu mobile"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="padding-top:3rem;padding-bottom:3rem;">
+        <div class="section-title">
+            <h1>Contactez-nous</h1>
+            <p>Envoyez-nous votre question ou signalez un problème sur la plateforme.</p>
+        </div>
+        <div class="form-container">
+            <form id="contact-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="contact-name">Nom et prénom *</label>
+                        <input type="text" id="contact-name" maxlength="120" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email">Adresse e-mail *</label>
+                        <input type="email" id="contact-email" maxlength="254" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="contact-subject">Objet *</label>
+                        <input type="text" id="contact-subject" maxlength="200" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="contact-message">Votre message *</label>
+                        <textarea id="contact-message" minlength="10" maxlength="5000" required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Envoyer le message</button>
+            </form>
+        </div>
+        <section id="confidentialite" class="form-container" style="margin-top:2rem;">
+            <h2>Confidentialité</h2>
+            <p>Les informations transmises par ce formulaire sont enregistrées pour traiter votre demande. N’incluez pas de mot de passe, de document d’identité ni d’autre donnée sensible dans votre message.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-bottom"><p>&copy; 2026 EmploiConnect CI.</p></div>
+        </div>
+    </footer>
+    <button id="back-to-top" class="back-to-top" title="Retour en haut"><i class="fas fa-arrow-up"></i></button>
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/forms.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Espace Candidat - EmploiConnect CI</title>
-    <meta name="description" content="Créez votre profil candidat, déposez votre CV local et valorisez vos compétences auprès des recruteurs en Côte d'Ivoire.">
+    <meta name="description" content="Créez votre profil candidat, déposez votre CV privé et valorisez vos compétences auprès des recruteurs en Côte d'Ivoire.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -45,25 +45,51 @@
         <div class="form-container">
             <div style="background: var(--primary-light); padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 2rem; border-left: 4px solid var(--primary-color);">
                 <p style="font-size: 0.9rem; color: var(--text-color);">
-                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Note de confidentialité :</strong> Ce site est un prototype statique. Vos données et votre CV sont stockés exclusivement dans le stockage local (<code>localStorage</code>) de votre navigateur et ne sont jamais envoyés sur un serveur distant.
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> <strong>Confidentialité :</strong> Votre CV est conservé dans un espace privé et partagé uniquement avec les recruteurs auxquels vous postulez.
                 </p>
             </div>
 
-            <form id="candidate-profile-form">
+            <div class="form-container" id="account-panel">
+                <h2>Votre compte candidat</h2>
+                <p id="account-message" aria-live="polite">Connectez-vous ou créez un compte pour enregistrer votre profil et postuler.</p>
+                <form id="account-form" data-role="candidate">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="account-email">Adresse e-mail</label>
+                            <input type="email" id="account-email" autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="account-password">Mot de passe (8 caractères minimum)</label>
+                            <input type="password" id="account-password" autocomplete="current-password" minlength="8" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-mode">Action</label>
+                        <select id="account-mode">
+                            <option value="signin">Se connecter</option>
+                            <option value="signup">Créer un compte candidat</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Continuer</button>
+                </form>
+                <button id="signout-button" class="btn btn-outline" type="button" hidden>Se déconnecter</button>
+            </div>
+
+            <form id="candidate-profile-form" hidden>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="cand-name">Nom et Prénom *</label>
-                        <input type="text" id="cand-name" required placeholder="Ex: Kouassi Amenan Marie">
+                        <input type="text" id="cand-name" maxlength="120" required placeholder="Ex: Kouassi Amenan Marie">
                     </div>
 
                     <div class="form-group">
                         <label for="cand-email">Adresse e-mail *</label>
-                        <input type="email" id="cand-email" required placeholder="Ex: amenan.kouassi@gmail.com">
+                        <input type="email" id="cand-email" maxlength="254" required readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="cand-phone">Numéro de téléphone *</label>
-                        <input type="tel" id="cand-phone" required placeholder="Ex: +225 07 01 02 03 04">
+                        <input type="tel" id="cand-phone" maxlength="40" required placeholder="Ex: +225 07 01 02 03 04">
                     </div>
 
                     <div class="form-group">
@@ -80,7 +106,7 @@
 
                     <div class="form-group">
                         <label for="cand-job">Métier / Poste recherché *</label>
-                        <input type="text" id="cand-job" required placeholder="Ex: Développeur Web, Comptable, Commercial...">
+                        <input type="text" id="cand-job" maxlength="150" required placeholder="Ex: Développeur Web, Comptable, Commercial...">
                     </div>
 
                     <div class="form-group">
@@ -107,18 +133,18 @@
 
                     <div class="form-group">
                         <label for="cand-skills">Compétences clés (séparées par des virgules) *</label>
-                        <input type="text" id="cand-skills" required placeholder="Ex: Excel, JavaScript, Négociation, Comptabilité">
+                        <input type="text" id="cand-skills" maxlength="5000" required placeholder="Ex: Excel, JavaScript, Négociation, Comptabilité">
                     </div>
 
                     <div class="form-group full-width">
                         <label for="cand-bio">Présentation professionnelle / Résumé</label>
-                        <textarea id="cand-bio" placeholder="Décrivez brièvement votre parcours, vos ambitions et vos points forts..."></textarea>
+                        <textarea id="cand-bio" maxlength="5000" placeholder="Décrivez brièvement votre parcours, vos ambitions et vos points forts..."></textarea>
                     </div>
 
                     <div class="form-group full-width">
-                        <label for="cand-cv">Téléverser votre CV (Format PDF ou DOCX, max 5 Mo) *</label>
-                        <input type="file" id="cand-cv" accept=".pdf,.docx" required>
-                        <small style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Le fichier reste local sur votre poste.</small>
+                        <label for="cand-cv">Téléverser votre CV (PDF ou DOCX, max 5 Mo)</label>
+                        <input type="file" id="cand-cv" accept=".pdf,.docx">
+                        <small id="candidate-cv-status" style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-top: 0.25rem;">Le CV est privé et accessible aux recruteurs auxquels vous postulez.</small>
                     </div>
                 </div>
 
@@ -126,6 +152,10 @@
                     <button type="submit" class="btn btn-primary" style="padding: 0.875rem 2.5rem;"><i class="fas fa-save"></i> Enregistrer mon profil</button>
                 </div>
             </form>
+            <section id="candidate-applications" class="form-container" hidden>
+                <h2>Mes candidatures</h2>
+                <div id="candidate-applications-list" aria-live="polite"></div>
+            </section>
         </div>
     </section>
 
@@ -146,19 +176,19 @@
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h3>Informations Légales</h3>
+                    <h3>Confidentialité</h3>
                     <ul>
-                        <li><a href="contact.html">Mentions Légales</a></li>
-                        <li><a href="contact.html">Politique de Confidentialité</a></li>
+                        <li><a href="contact.html">Nous contacter</a></li>
+                        <li><a href="contact.html#confidentialite">Données personnelles</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
                     <h3>Contact</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Email : contact@emploiconnect.ci</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;"><a href="contact.html">Écrivez-nous via le formulaire de contact.</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 EmploiConnect CI - Prototype Front-End Statique.</p>
+                <p>&copy; 2026 EmploiConnect CI.</p>
             </div>
         </div>
     </footer>
@@ -167,6 +197,9 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <script src="js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
     <script src="js/forms.js"></script>
